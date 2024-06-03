@@ -10,12 +10,7 @@ from mouse import _MouseListener, hook, LEFT
 class Screen:
     def __init__(self, start: tuple, mode="office"):
         self.start = time2(start[0], start[1], start[2])
-        self.end = None
-        self.mode = mode
-        if self.mode == "office":
-            self.end = time2(6, 50, 0)
-        elif self.mode == "home":
-            self.end = time2(7, 55, 0)
+        self.end = time2(6, 50, 0) if mode == "office" else (time2(7, 55, 0) if mode == "home" else None)
 
     def send_alert(self):
         # if not self.alert_status():
@@ -49,7 +44,6 @@ class MouseEvent:
         self.moved = False
 
     def moved_status(self, x, y):
-        print((x, y), "|", self.xy)
         pos = []
         for i, j in zip((x, y), self.xy):
             if abs(i - j) <= 2:
@@ -68,11 +62,11 @@ def main():
         else:
             mover = Screen((0, 1, 0), mode=mode)
             break
-    print(f"Mouse will move between: {mover.start} AM - {mover.end} AM")
-    event = MouseEvent()
     print("\nClick to start")
+    event = MouseEvent()
     mouse.hook(event.on_move)
     mouse.wait(button=LEFT)
+    print(f"Program will run during: {mover.start} AM - {mover.end} AM")
     event.non_move()
     time_passed = 0
     mouse_sleep = 0
